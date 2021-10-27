@@ -1,7 +1,7 @@
 /*
  * I2C-Generator: 0.3.0
  * Yaml Version: 1.1.0
- * Template Version: 0.7.0-78-g11fb280
+ * Template Version: 0.7.0-80-gf4d3b1b
  */
 /*
  * Copyright (c) 2021, Sensirion AG
@@ -40,18 +40,18 @@
 #include "sensirion_i2c_hal.h"
 #include "sfm_sf06_i2c.h"
 
-/*
- * TO USE CONSOLE OUTPUT (PRINTF) YOU MAY NEED TO ADAPT THE INCLUDE ABOVE OR
- * DEFINE IT ACCORDING TO YOUR PLATFORM:
- * #define printf(...)
+/**
+ * select the proper i2c address for your sensor
+ * see datasheet of your sensor
+ *
  */
-
-// TODO: DRIVER_GENERATOR Add missing commands and make prints more pretty
 
 int main(void) {
     int16_t error = 0;
 
     sensirion_i2c_hal_init();
+
+    init_driver(ADDR_SFM3119);
 
     error = sfm_sf06_stop_continuous_measurement();
 
@@ -81,14 +81,30 @@ int main(void) {
 
     // Start Measurement
 
-    // TODO: DRIVER_GENERATOR adapt loop counter according to delay, so that
+    error = sfm_sf06_start_o2_continuous_measurement();
+    if (error) {
+        printf(
+            "Error executing sfm_sf06_start_o2_continuous_measurement(): %i\n",
+            error);
+
+        return error;
+    }
+    printf("%12s\t%12s\t%12s\n", "flow", "temperature", "status");
     // measurement runs e.g. one min
     for (int i = 0; i < 60; i++) {
         // Read Measurement
-        // TODO: DRIVER_GENERATOR check and update measurement interval
-        sensirion_i2c_hal_sleep_usec(1000000);
-        // TODO: DRIVER_GENERATOR Add scaling and offset to printed measurement
-        // values
+        int16_t flow = 0;
+        int16_t temperature = 0;
+        uint16_t status = 0;
+        sensirion_i2c_hal_sleep_usec(500000);
+        error = sfm_sf06_read_measurement_data(&flow, &temperature, &status);
+        if (error) {
+            printf("Error executing sfm_sf06_read_measurement_data(): %i\n",
+                   error);
+            continue;
+        }
+
+        printf("%12i\t%12i\t%12i\n", flow, temperature, status);
     }
 
     error = sfm_sf06_stop_continuous_measurement();

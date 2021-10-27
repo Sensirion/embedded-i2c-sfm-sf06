@@ -3,7 +3,7 @@
  *
  * I2C-Generator: 0.3.0
  * Yaml Version: 1.1.0
- * Template Version: 0.7.0-78-g11fb280
+ * Template Version: 0.7.0-80-gf4d3b1b
  */
 /*
  * Copyright (c) 2021, Sensirion AG
@@ -44,6 +44,54 @@ extern "C" {
 #endif
 
 #include "sensirion_config.h"
+
+// i2c adresses; for proper configuration see datasheet
+
+//- SFM3003
+#define ADDR_SFM3003_300_CL 0x28
+#define ADDR_SFM3003_300_CE 0x2D
+
+//- SFM4300
+#define ADDR_SFM4300_A 0x2A
+#define ADDR_SFM4300_B 0x2A
+#define ADDR_SFM4300_C 0x2C
+#define ADDR_SFM4300_D 0x2D
+
+//- SFM3119
+#define ADDR_SFM3119 0x29
+
+//- SFM3013
+#define ADDR_SFM3013 0x2F
+
+//- SFM3019
+#define ADDR_SFM3019 0x2E
+
+typedef enum {
+    cmd_02_measurement = 0x3603,
+    cmd_air_measurement = 0x3608,
+    cmd_no2_measurement = 0x3615,
+    cmd_co2_measurement = 0x361E,
+    cmd_airo2_measurement = 0x3632,
+    cmd_no2o2_measurement = 0x3639,
+    cmd_co2o2_measurement = 0x3646
+} command_code_t;
+
+typedef struct sfm_sf06_tag {
+    uint8_t i2c_address;
+    int16_t flow_scaling_factor;
+    int16_t flow_offset;
+    uint16_t flow_unit;
+} sfm_sf06_t;
+
+/**
+ * init_driver() - sets the i2c address that needs to be used
+ *
+ * @return const pointer to the initialized driver instance
+ *
+ * This pointer may be used to read the scaling factors after the measurement is
+ * started.
+ */
+const sfm_sf06_t* init_driver(uint8_t i2c_address);
 
 /**
  * sfm_sf06_start_o2_continuous_measurement() - The sensor starts measuring both
@@ -246,6 +294,21 @@ refers to *Reset-i2c address pointer*. For more details see data-sheet section
 int16_t sfm_sf06_update_concentration_activate(void);
 
 /**
+ * sfm_sf06_update_concentration() - Set and activate a new volume fraction.
+ *
+ * This is a convenience method that combines the two methods
+ sfm_sf06_update_concentration_set() and
+ * sfm_sf06_update_concentration_activate()
+
+ *
+ * @param volume_fraction New O₂ volume fraction
+
+ *
+ * @return 0 on success, an error code otherwise
+ */
+int16_t sfm_sf06_update_concentration(uint16_t volume_fraction);
+
+/**
  * sfm_sf06_stop_continuous_measurement() - This command stops the continuous
 measurement and puts the sensor in idle mode. After it receives the stop
 command, the sensor needs up to 0.5ms to power down the heater, enter idle mode
@@ -278,13 +341,17 @@ If no averaging is desired, set N to 1.
 int16_t sfm_sf06_configure_averaging(uint16_t average_window);
 
 /**
- * sfm_sf06_read_scale_offset_flow() - This command provides the scale factor
+ * sfm_sf06_read_scale_offset_unit() - This command provides the scale factor
 and offset to convert flow readings into physical units. The scale factor and
 offset are specific to the calibrated gas / gas mixture and its corresponding
 lookup table used for the flow measurement. Therefore, the gas / gas mixture
 needs to be specified in the command argument by the command code of the
 corresponding start continuous measurement. For detailed information see
 data-sheet.
+
+ *
+ * @param command_code Code of measurement from which we want to have that
+information.
 
  *
  * @param flow_scale_factor Scale factor used by the sensor.
@@ -298,7 +365,8 @@ data-sheet.
  *
  * @return 0 on success, an error code otherwise
  */
-int16_t sfm_sf06_read_scale_offset_flow(int16_t* flow_scale_factor,
+int16_t sfm_sf06_read_scale_offset_unit(command_code_t command_code,
+                                        int16_t* flow_scale_factor,
                                         int16_t* flow_offset,
                                         uint16_t* flow_unit);
 

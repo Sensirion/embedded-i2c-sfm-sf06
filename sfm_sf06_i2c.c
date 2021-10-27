@@ -3,7 +3,7 @@
  *
  * I2C-Generator: 0.3.0
  * Yaml Version: 1.1.0
- * Template Version: 0.7.0-78-g11fb280
+ * Template Version: 0.7.0-80-gf4d3b1b
  */
 /*
  * Copyright (c) 2021, Sensirion AG
@@ -41,15 +41,31 @@
 #include "sensirion_i2c.h"
 #include "sensirion_i2c_hal.h"
 
-#define SFM_SF06_I2C_ADDRESS 0x2A
+#define SFM_SF06_I2C_ADDRESS _driver.i2c_address
+
+static sfm_sf06_t _driver = {.flow_offset = 0,
+                             .flow_scaling_factor = 1,
+                             .i2c_address = 0,
+                             .flow_unit = 0};
+
+const sfm_sf06_t* init_driver(uint8_t i2c_address) {
+    _driver.i2c_address = i2c_address;
+    return &_driver;
+}
 
 int16_t sfm_sf06_start_o2_continuous_measurement(void) {
     int16_t error;
     uint8_t buffer[2];
     uint16_t offset = 0;
-    offset = sensirion_i2c_add_command_to_buffer(&buffer[0], offset, 0x3603);
+    offset = sensirion_i2c_add_command_to_buffer(buffer, offset, 0x3603);
 
-    error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, &buffer[0], offset);
+    error = sfm_sf06_read_scale_offset_unit(
+        cmd_02_measurement, &_driver.flow_scaling_factor, &_driver.flow_offset,
+        &_driver.flow_unit);
+    if (error) {
+        return error;
+    }
+    error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, buffer, offset);
     if (error) {
         return error;
     }
@@ -60,18 +76,33 @@ int16_t sfm_sf06_start_o2_continuous_measurement(void) {
 int16_t sfm_sf06_start_air_continuous_measurement(void) {
     uint8_t buffer[2];
     uint16_t offset = 0;
-    offset = sensirion_i2c_add_command_to_buffer(&buffer[0], offset, 0x3608);
 
-    return sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, &buffer[0], offset);
+    int16_t error = sfm_sf06_read_scale_offset_unit(
+        cmd_air_measurement, &_driver.flow_scaling_factor, &_driver.flow_offset,
+        &_driver.flow_unit);
+    if (error) {
+        return error;
+    }
+
+    offset = sensirion_i2c_add_command_to_buffer(buffer, offset, 0x3608);
+
+    return sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, buffer, offset);
 }
 
 int16_t sfm_sf06_start_n2o_continuous_measurement(void) {
     int16_t error;
     uint8_t buffer[2];
     uint16_t offset = 0;
-    offset = sensirion_i2c_add_command_to_buffer(&buffer[0], offset, 0x3615);
 
-    error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, &buffer[0], offset);
+    error = sfm_sf06_read_scale_offset_unit(
+        cmd_no2_measurement, &_driver.flow_scaling_factor, &_driver.flow_offset,
+        &_driver.flow_unit);
+    if (error) {
+        return error;
+    }
+
+    offset = sensirion_i2c_add_command_to_buffer(buffer, offset, 0x3615);
+    error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, buffer, offset);
     if (error) {
         return error;
     }
@@ -83,9 +114,17 @@ int16_t sfm_sf06_start_co2_continuous_measurement(void) {
     int16_t error;
     uint8_t buffer[2];
     uint16_t offset = 0;
-    offset = sensirion_i2c_add_command_to_buffer(&buffer[0], offset, 0x361E);
 
-    error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, &buffer[0], offset);
+    error = sfm_sf06_read_scale_offset_unit(
+        cmd_co2_measurement, &_driver.flow_scaling_factor, &_driver.flow_offset,
+        &_driver.flow_unit);
+    if (error) {
+        return error;
+    }
+
+    offset = sensirion_i2c_add_command_to_buffer(buffer, offset, 0x361E);
+
+    error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, buffer, offset);
     if (error) {
         return error;
     }
@@ -97,10 +136,18 @@ int16_t sfm_sf06_start_air_o2_continuous_measurement(uint16_t volume_fraction) {
     int16_t error;
     uint8_t buffer[5];
     uint16_t offset = 0;
-    offset = sensirion_i2c_add_command_to_buffer(&buffer[0], offset, 0x3632);
 
-    offset = sensirion_i2c_add_uint16_t_to_buffer(&buffer[0], offset,
-                                                  volume_fraction);
+    error = sfm_sf06_read_scale_offset_unit(
+        cmd_airo2_measurement, &_driver.flow_scaling_factor,
+        &_driver.flow_offset, &_driver.flow_unit);
+    if (error) {
+        return error;
+    }
+
+    offset = sensirion_i2c_add_command_to_buffer(buffer, offset, 0x3632);
+
+    offset =
+        sensirion_i2c_add_uint16_t_to_buffer(buffer, offset, volume_fraction);
 
     error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, &buffer[0], offset);
     if (error) {
@@ -114,10 +161,18 @@ int16_t sfm_sf06_start_no2_o2_continuous_measurement(uint16_t volume_fraction) {
     int16_t error;
     uint8_t buffer[5];
     uint16_t offset = 0;
-    offset = sensirion_i2c_add_command_to_buffer(&buffer[0], offset, 0x3639);
 
-    offset = sensirion_i2c_add_uint16_t_to_buffer(&buffer[0], offset,
-                                                  volume_fraction);
+    error = sfm_sf06_read_scale_offset_unit(
+        cmd_no2o2_measurement, &_driver.flow_scaling_factor,
+        &_driver.flow_offset, &_driver.flow_unit);
+    if (error) {
+        return error;
+    }
+
+    offset = sensirion_i2c_add_command_to_buffer(buffer, offset, 0x3639);
+
+    offset =
+        sensirion_i2c_add_uint16_t_to_buffer(buffer, offset, volume_fraction);
 
     error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, &buffer[0], offset);
     if (error) {
@@ -131,12 +186,20 @@ int16_t sfm_sf06_start_c02_02_continuous_measurement(uint16_t volume_fraction) {
     int16_t error;
     uint8_t buffer[5];
     uint16_t offset = 0;
-    offset = sensirion_i2c_add_command_to_buffer(&buffer[0], offset, 0x3646);
 
-    offset = sensirion_i2c_add_uint16_t_to_buffer(&buffer[0], offset,
-                                                  volume_fraction);
+    error = sfm_sf06_read_scale_offset_unit(
+        cmd_co2o2_measurement, &_driver.flow_scaling_factor,
+        &_driver.flow_offset, &_driver.flow_unit);
+    if (error) {
+        return error;
+    }
 
-    error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, &buffer[0], offset);
+    offset = sensirion_i2c_add_command_to_buffer(buffer, offset, 0x3646);
+
+    offset =
+        sensirion_i2c_add_uint16_t_to_buffer(buffer, offset, volume_fraction);
+
+    error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, buffer, offset);
     if (error) {
         return error;
     }
@@ -148,15 +211,6 @@ int16_t sfm_sf06_read_measurement_data(int16_t* flow, int16_t* temperature,
                                        uint16_t* status_word) {
     int16_t error;
     uint8_t buffer[9];
-    uint16_t offset = 0;
-    offset = sensirion_i2c_add_command_to_buffer(&buffer[0], offset, 0xFFFF);
-
-    error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, &buffer[0], offset);
-    if (error) {
-        return error;
-    }
-
-    sensirion_i2c_hal_sleep_usec(0);
 
     error =
         sensirion_i2c_read_data_inplace(SFM_SF06_I2C_ADDRESS, &buffer[0], 6);
@@ -188,6 +242,14 @@ int16_t sfm_sf06_update_concentration_activate(void) {
     return sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, &buffer[0], offset);
 }
 
+int16_t sfm_sf06_update_concentration(uint16_t volume_fraction) {
+    int16_t error = sfm_sf06_update_concentration_set(volume_fraction);
+    if (error) {
+        return error;
+    }
+    return sfm_sf06_update_concentration_activate();
+}
+
 int16_t sfm_sf06_stop_continuous_measurement(void) {
     uint8_t buffer[2];
     uint16_t offset = 0;
@@ -207,13 +269,17 @@ int16_t sfm_sf06_configure_averaging(uint16_t average_window) {
     return sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, &buffer[0], offset);
 }
 
-int16_t sfm_sf06_read_scale_offset_flow(int16_t* flow_scale_factor,
+int16_t sfm_sf06_read_scale_offset_unit(command_code_t command_code,
+                                        int16_t* flow_scale_factor,
                                         int16_t* flow_offset,
                                         uint16_t* flow_unit) {
     int16_t error;
     uint8_t buffer[9];
     uint16_t offset = 0;
     offset = sensirion_i2c_add_command_to_buffer(&buffer[0], offset, 0x3661);
+
+    offset =
+        sensirion_i2c_add_uint16_t_to_buffer(&buffer[0], offset, command_code);
 
     error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, &buffer[0], offset);
     if (error) {

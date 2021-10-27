@@ -3,7 +3,7 @@
  *
  * I2C-Generator: 0.3.0
  * Yaml Version: 1.1.0
- * Template Version: 0.7.0-78-g11fb280
+ * Template Version: 0.7.0-80-gf4d3b1b
  */
 /*
  * Copyright (c) 2021, Sensirion AG
@@ -45,19 +45,13 @@
 #include <inttypes.h>
 #include <stdio.h>
 
-// TODO: DRIVER_GENERATOR Remove commands which shouldn't be tested
-// TODO: DRIVER_GENERATOR Adjust setup and teardown
-// TODO: DRIVER_GENERATOR Adjust all tests such that pre- and post conditions
-// are meet
-
 TEST_GROUP (SFM_SF06_Tests) {
     void setup() {
         sensirion_i2c_hal_init();
-
-        // Select MUX 1 channel 1 (TODO: DRIVER_GENERATOR choose correct mux
-        // position)
         int16_t error = sensirion_i2c_mux_set_single_channel(0x71, 1);
         CHECK_EQUAL_ZERO_TEXT(error, "sensirion_i2c_mux_set_single_channel")
+        init_driver(
+            ADDR_SFM4300_A);  // only with sfm4300 all tests can be executed!
     }
 
     void teardown() {
@@ -152,14 +146,15 @@ TEST (SFM_SF06_Tests, SFM_SF06_Test_configure_averaging) {
     CHECK_EQUAL_ZERO_TEXT(error, "sfm_sf06_configure_averaging");
 }
 
-TEST (SFM_SF06_Tests, SFM_SF06_Test_read_scale_offset_flow) {
+TEST (SFM_SF06_Tests, SFM_SF06_Test_read_scale_offset_unit) {
     int16_t error;
+    uint16_t command_code = 0;
     int16_t flow_scale_factor;
     int16_t flow_offset;
     uint16_t flow_unit;
-    error = sfm_sf06_read_scale_offset_flow(&flow_scale_factor, &flow_offset,
-                                            &flow_unit);
-    CHECK_EQUAL_ZERO_TEXT(error, "sfm_sf06_read_scale_offset_flow");
+    error = sfm_sf06_read_scale_offset_unit(command_code, &flow_scale_factor,
+                                            &flow_offset, &flow_unit);
+    CHECK_EQUAL_ZERO_TEXT(error, "sfm_sf06_read_scale_offset_unit");
     printf("Flow scale factor: %i\n", flow_scale_factor);
     printf("Flow offset: %i\n", flow_offset);
     printf("Flow unit: %u\n", flow_unit);
