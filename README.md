@@ -1,8 +1,25 @@
 # Getting started
 
+This document explains how to setup a sensor of the sfm-sf06 family. The current
+example uses the *SFM3119*
+[<center><img src="images/sfm3119.png" width="300px"></center>](./images/sfm3119.png). 
+
+The following picture shows the connector layout for the SFMSF3119
+<center><img src="images/sfm3119_pinout.png" width="450px"></center>
+
+Other supported sensors are
+ * SFM3003
+ * SFM4300
+ * SFM3119
+ * SFM3012
+ * SFM3019
+
+ Click [here](https://www.sensirion.com/flow-sensors) to learn more about the sfm-sf06 sensors.
+
+
 ## Implement the I2C Interface
 
-So we need to adjust two files according to your platform.
+In order to use the provided code we need to adjust two files according to your platform.
 
 ### Edit `sensirion_i2c_hal.c`
 
@@ -42,6 +59,13 @@ need to specify the following integer types yourself:
 
 In addition to that you will need to specify `NULL`. For both we have a
 detailed template where you just need to fill in your system specific values.
+
+## Choose the i2c address to use with your product
+
+The current code is configured to run with the SFMSF3119. In case you would like to use
+a different product you will need to adapt the configured I2c address.
+This is achieved by changing the parameter *init_driver()* to the correct address. The list 
+of supported I2C-addresses is found in the header *sfm_sf06_i2c.h*.
 
 Now we are ready to compile and run the example usage for your sensor.
 

@@ -57,7 +57,6 @@ int16_t sfm_sf06_start_o2_continuous_measurement(void) {
     int16_t error;
     uint8_t buffer[2];
     uint16_t offset = 0;
-    offset = sensirion_i2c_add_command_to_buffer(buffer, offset, 0x3603);
 
     error = sfm_sf06_read_scale_offset_unit(
         cmd_02_measurement, &_driver.flow_scaling_factor, &_driver.flow_offset,
@@ -65,7 +64,9 @@ int16_t sfm_sf06_start_o2_continuous_measurement(void) {
     if (error) {
         return error;
     }
-    error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, buffer, offset);
+
+    offset = sensirion_i2c_add_command_to_buffer(&buffer[0], offset, 0x3603);
+    error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, &buffer[0], offset);
     if (error) {
         return error;
     }
@@ -84,9 +85,9 @@ int16_t sfm_sf06_start_air_continuous_measurement(void) {
         return error;
     }
 
-    offset = sensirion_i2c_add_command_to_buffer(buffer, offset, 0x3608);
+    offset = sensirion_i2c_add_command_to_buffer(&buffer[0], offset, 0x3608);
 
-    return sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, buffer, offset);
+    return sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, &buffer[0], offset);
 }
 
 int16_t sfm_sf06_start_n2o_continuous_measurement(void) {
@@ -101,8 +102,8 @@ int16_t sfm_sf06_start_n2o_continuous_measurement(void) {
         return error;
     }
 
-    offset = sensirion_i2c_add_command_to_buffer(buffer, offset, 0x3615);
-    error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, buffer, offset);
+    offset = sensirion_i2c_add_command_to_buffer(&buffer[0], offset, 0x3615);
+    error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, &buffer[0], offset);
     if (error) {
         return error;
     }
@@ -122,9 +123,9 @@ int16_t sfm_sf06_start_co2_continuous_measurement(void) {
         return error;
     }
 
-    offset = sensirion_i2c_add_command_to_buffer(buffer, offset, 0x361E);
+    offset = sensirion_i2c_add_command_to_buffer(&buffer[0], offset, 0x361E);
 
-    error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, buffer, offset);
+    error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, &buffer[0], offset);
     if (error) {
         return error;
     }
@@ -144,10 +145,10 @@ int16_t sfm_sf06_start_air_o2_continuous_measurement(uint16_t volume_fraction) {
         return error;
     }
 
-    offset = sensirion_i2c_add_command_to_buffer(buffer, offset, 0x3632);
+    offset = sensirion_i2c_add_command_to_buffer(&buffer[0], offset, 0x3632);
 
-    offset =
-        sensirion_i2c_add_uint16_t_to_buffer(buffer, offset, volume_fraction);
+    offset = sensirion_i2c_add_uint16_t_to_buffer(&buffer[0], offset,
+                                                  volume_fraction);
 
     error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, &buffer[0], offset);
     if (error) {
@@ -169,10 +170,10 @@ int16_t sfm_sf06_start_no2_o2_continuous_measurement(uint16_t volume_fraction) {
         return error;
     }
 
-    offset = sensirion_i2c_add_command_to_buffer(buffer, offset, 0x3639);
+    offset = sensirion_i2c_add_command_to_buffer(&buffer[0], offset, 0x3639);
 
-    offset =
-        sensirion_i2c_add_uint16_t_to_buffer(buffer, offset, volume_fraction);
+    offset = sensirion_i2c_add_uint16_t_to_buffer(&buffer[0], offset,
+                                                  volume_fraction);
 
     error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, &buffer[0], offset);
     if (error) {
@@ -194,12 +195,12 @@ int16_t sfm_sf06_start_c02_02_continuous_measurement(uint16_t volume_fraction) {
         return error;
     }
 
-    offset = sensirion_i2c_add_command_to_buffer(buffer, offset, 0x3646);
+    offset = sensirion_i2c_add_command_to_buffer(&buffer[0], offset, 0x3646);
 
-    offset =
-        sensirion_i2c_add_uint16_t_to_buffer(buffer, offset, volume_fraction);
+    offset = sensirion_i2c_add_uint16_t_to_buffer(&buffer[0], offset,
+                                                  volume_fraction);
 
-    error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, buffer, offset);
+    error = sensirion_i2c_write_data(SFM_SF06_I2C_ADDRESS, &buffer[0], offset);
     if (error) {
         return error;
     }

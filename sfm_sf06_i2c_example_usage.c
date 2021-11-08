@@ -40,17 +40,15 @@
 #include "sensirion_i2c_hal.h"
 #include "sfm_sf06_i2c.h"
 
-/**
- * select the proper i2c address for your sensor
- * see datasheet of your sensor
- *
- */
-
 int main(void) {
     int16_t error = 0;
 
     sensirion_i2c_hal_init();
 
+    /**
+     * select the proper i2c address for your sensor
+     * see datasheet of your sensor
+     */
     init_driver(ADDR_SFM3119);
 
     error = sfm_sf06_stop_continuous_measurement();
@@ -90,7 +88,7 @@ int main(void) {
         return error;
     }
     printf("%12s\t%12s\t%12s\n", "flow", "temperature", "status");
-    // measurement runs e.g. one min
+
     for (int i = 0; i < 60; i++) {
         // Read Measurement
         int16_t flow = 0;
