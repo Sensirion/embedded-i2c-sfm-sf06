@@ -3,7 +3,7 @@
  *
  * I2C-Generator: 0.3.0
  * Yaml Version: 1.1.0
- * Template Version: 0.7.0-89-gb95f163
+ * Template Version: 0.7.0-99-gc51b50d
  */
 /*
  * Copyright (c) 2021, Sensirion AG
@@ -67,12 +67,12 @@ extern "C" {
 #define ADDR_SFM3019 0x2E
 
 typedef enum {
-    cmd_02_measurement = 0x3603,
+    cmd_o2_measurement = 0x3603,
     cmd_air_measurement = 0x3608,
-    cmd_no2_measurement = 0x3615,
+    cmd_n2o_measurement = 0x3615,
     cmd_co2_measurement = 0x361E,
     cmd_airo2_measurement = 0x3632,
-    cmd_no2o2_measurement = 0x3639,
+    cmd_n2oo2_measurement = 0x3639,
     cmd_co2o2_measurement = 0x3646
 } command_code_t;
 
@@ -108,7 +108,7 @@ const sfm_sf06_t* init_driver(uint8_t i2c_address);
  *
  * @note The first measurement result will be available after 12ms. Small
  * accuracy deviations (few % of reading) can occur during the first 30ms
- * (including the 12ms)
+ * (including the 12ms).
  *
  * @return 0 on success, an error code otherwise
  */
@@ -129,7 +129,7 @@ int16_t sfm_sf06_start_o2_continuous_measurement(void);
  *
  * @note The first measurement result will be available after 12ms. Small
  * accuracy deviations (few % of reading) can occur during the first 30ms
- * (including the 12ms)
+ * (including the 12ms).
  *
  * @return 0 on success, an error code otherwise
  */
@@ -148,7 +148,7 @@ int16_t sfm_sf06_start_air_continuous_measurement(void);
  *
  * @note The first measurement result will be available after 12ms. Small
  * accuracy deviations (few % of reading) can occur during the first 30ms
- * (including the 12ms)
+ * (including the 12ms).
  *
  * @return 0 on success, an error code otherwise
  */
@@ -165,7 +165,7 @@ int16_t sfm_sf06_start_n2o_continuous_measurement(void);
  *
  * @note The first measurement result will be available after 12ms. Small
  * accuracy deviations (few % of reading) can occur during the first 30ms
- * (including the 12ms)
+ * (including the 12ms).
  *
  * @return 0 on success, an error code otherwise
  */
@@ -191,7 +191,7 @@ int16_t sfm_sf06_start_co2_continuous_measurement(void);
 int16_t sfm_sf06_start_air_o2_continuous_measurement(uint16_t volume_fraction);
 
 /**
- * sfm_sf06_start_no2_o2_continuous_measurement() - The sensor starts measuring
+ * sfm_sf06_start_n2o_o2_continuous_measurement() - The sensor starts measuring
  * the  N₂O / O₂ flow and temperature and provides a status word. All three
  * measurement results can be read out through one single I2C read when the
  * continuous measurement is running. The specific command code used for the
@@ -204,10 +204,10 @@ int16_t sfm_sf06_start_air_o2_continuous_measurement(uint16_t volume_fraction);
  *
  * @return 0 on success, an error code otherwise
  */
-int16_t sfm_sf06_start_no2_o2_continuous_measurement(uint16_t volume_fraction);
+int16_t sfm_sf06_start_n2o_o2_continuous_measurement(uint16_t volume_fraction);
 
 /**
- * sfm_sf06_start_c02_02_continuous_measurement() - The sensor starts measuring
+ * sfm_sf06_start_co2_o2_continuous_measurement() - The sensor starts measuring
  * the  CO₂ / O₂ flow and temperature and provides a status word. All three
  * measurement results can be read out through one single I2C read when the
  * continuous measurement is running. The specific command code used for the
@@ -219,7 +219,7 @@ int16_t sfm_sf06_start_no2_o2_continuous_measurement(uint16_t volume_fraction);
  *
  * @return 0 on success, an error code otherwise
  */
-int16_t sfm_sf06_start_c02_02_continuous_measurement(uint16_t volume_fraction);
+int16_t sfm_sf06_start_co2_o2_continuous_measurement(uint16_t volume_fraction);
 
 /**
  * sfm_sf06_read_measurement_data() - After the command
@@ -229,7 +229,7 @@ int16_t sfm_sf06_start_c02_02_continuous_measurement(uint16_t volume_fraction);
  *
  * @note The first measurement result will be available after 12ms. Small
  * accuracy deviations (few % of reading) can occur during the first 30ms
- * (including the 12ms)
+ * (including the 12ms).
  *
  * @param flow Calibrated flow signal.
  *
@@ -252,7 +252,7 @@ int16_t sfm_sf06_read_measurement_data(int16_t* flow, int16_t* temperature,
  * running measurement mode. This first instruction transmits the new
  * concentration value to the flow sensor. This instruction refers to *Transmit
  * concentration*. For more details see data-sheet section *Update
- * Concentration*
+ * Concentration*.
  *
  * @param volume_fraction New O₂ volume fraction
  *
@@ -267,7 +267,7 @@ int16_t sfm_sf06_update_concentration_set(uint16_t volume_fraction);
  * buffer such that the measurement data as described by the transfer
  * read_measurement_data are optained upon a subsequent read. This instruction
  * refers to *Reset-i2c address pointer*. For more details see data-sheet
- * section *Update Concentration*
+ * section *Update Concentration*.
  *
  * @return 0 on success, an error code otherwise
  */
@@ -367,7 +367,7 @@ int16_t sfm_sf06_exit_sleep(void);
 /**
  * sfm_sf06_read_product_identifier() - This command allows to read product
  * identifier and the serial number. The command can only be executed from the
- * idle mode, i.e. when the sensor is not performing measurements
+ * idle mode, i.e. when the sensor is not performing measurements.
  *
  * @param product_identifier 32-bit unique product and revision number
  *

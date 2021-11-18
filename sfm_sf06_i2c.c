@@ -3,7 +3,7 @@
  *
  * I2C-Generator: 0.3.0
  * Yaml Version: 1.1.0
- * Template Version: 0.7.0-80-gf4d3b1b
+ * Template Version: 0.7.0-99-gc51b50d
  */
 /*
  * Copyright (c) 2021, Sensirion AG
@@ -59,7 +59,7 @@ int16_t sfm_sf06_start_o2_continuous_measurement(void) {
     uint16_t offset = 0;
 
     error = sfm_sf06_read_scale_offset_unit(
-        cmd_02_measurement, &_driver.flow_scaling_factor, &_driver.flow_offset,
+        cmd_o2_measurement, &_driver.flow_scaling_factor, &_driver.flow_offset,
         &_driver.flow_unit);
     if (error) {
         return error;
@@ -96,7 +96,7 @@ int16_t sfm_sf06_start_n2o_continuous_measurement(void) {
     uint16_t offset = 0;
 
     error = sfm_sf06_read_scale_offset_unit(
-        cmd_no2_measurement, &_driver.flow_scaling_factor, &_driver.flow_offset,
+        cmd_n2o_measurement, &_driver.flow_scaling_factor, &_driver.flow_offset,
         &_driver.flow_unit);
     if (error) {
         return error;
@@ -158,13 +158,13 @@ int16_t sfm_sf06_start_air_o2_continuous_measurement(uint16_t volume_fraction) {
     return NO_ERROR;
 }
 
-int16_t sfm_sf06_start_no2_o2_continuous_measurement(uint16_t volume_fraction) {
+int16_t sfm_sf06_start_n2o_o2_continuous_measurement(uint16_t volume_fraction) {
     int16_t error;
     uint8_t buffer[5];
     uint16_t offset = 0;
 
     error = sfm_sf06_read_scale_offset_unit(
-        cmd_no2o2_measurement, &_driver.flow_scaling_factor,
+        cmd_n2oo2_measurement, &_driver.flow_scaling_factor,
         &_driver.flow_offset, &_driver.flow_unit);
     if (error) {
         return error;
@@ -183,7 +183,7 @@ int16_t sfm_sf06_start_no2_o2_continuous_measurement(uint16_t volume_fraction) {
     return NO_ERROR;
 }
 
-int16_t sfm_sf06_start_c02_02_continuous_measurement(uint16_t volume_fraction) {
+int16_t sfm_sf06_start_co2_o2_continuous_measurement(uint16_t volume_fraction) {
     int16_t error;
     uint8_t buffer[5];
     uint16_t offset = 0;
