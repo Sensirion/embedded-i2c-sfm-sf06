@@ -1,7 +1,8 @@
-# Getting started
+# Sensirion Embedded I2C SFM-SF06 Driver
 
-This document explains how to setup a sensor of the sfm-sf06 family. The current
-example uses the *SFM3119*
+This is a generic embedded driver for the Sensirion SFM-SF06 sensors. It enables developers to communicate with a SFM-SF06 sensor on different hardware platforms by only adapting the I2C communication related source files.
+
+The example uses the *SFM3119*
 [<center><img src="images/sfm3119.png" width="300px"></center>](./images/sfm3119.png). 
 
 The following picture shows the connector layout for the SFMSF3119
@@ -14,8 +15,10 @@ Other supported sensors are
  * SFM3012
  * SFM3019
 
- Click [here](https://www.sensirion.com/flow-sensors) to learn more about the sfm-sf06 sensors.
+ Click [here](https://sensirion.com/products/product-categories/gas-flow-sensors/) to learn more about the sfm-sf06 sensors.
 
+
+# Getting started
 
 ## Implement the I2C Interface
 
