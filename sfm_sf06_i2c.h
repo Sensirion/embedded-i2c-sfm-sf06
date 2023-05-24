@@ -103,7 +103,7 @@ const sfm_sf06_t* init_driver(uint8_t i2c_address);
  * - SFM3003
  * - SFM4300
  * - SFM3119
- * - SFM3012
+ * - SFM3013
  * - SFM3019
  *
  * @note The first measurement result will be available after 12ms. Small
@@ -124,7 +124,7 @@ int16_t sfm_sf06_start_o2_continuous_measurement(void);
  * - SFM3003
  * - SFM4300
  * - SFM3119
- * - SFM3012
+ * - SFM3013
  * - SFM3019
  *
  * @note The first measurement result will be available after 12ms. Small
@@ -137,14 +137,14 @@ int16_t sfm_sf06_start_air_continuous_measurement(void);
 
 /**
  * sfm_sf06_start_n2o_continuous_measurement() - The sensor starts measuring
- * both N₂O (*HeOx for SMF3012*) flow and temperature and provides a status
- * word. All three measurement results can be read out through one single I2C
- * read when the continuous measurement is running. The specific command code
- * used for the start continuous measurement command selects the calibrated gas
- * or binary gas mixture (lookup table) for the flow signal.
- * Supported by products:
- * - SFM4300
- * - SFM3013 (HeOx)
+ * both N₂O (*HeOx for SMF3013-300-CLM*) flow and temperature and provides a
+ * status word. All three measurement results can be read out through one single
+ * I2C read when the continuous measurement is running. The specific command
+ * code used for the start continuous measurement command selects the calibrated
+ * gas or binary gas mixture (lookup table) for the flow signal. Supported by
+ * products:
+ * - SFM4300-20
+ * - SFM3013-300-CLM (HeOx)
  *
  * @note The first measurement result will be available after 12ms. Small
  * accuracy deviations (few % of reading) can occur during the first 30ms
@@ -161,7 +161,7 @@ int16_t sfm_sf06_start_n2o_continuous_measurement(void);
  * continuous measurement is running. The specific command code used for the
  * start continuous measurement command selects the calibrated gas or binary gas
  * mixture (lookup table) for the flow signal. Supported by products:
- * - SFM4300
+ * - SFM4300-20
  *
  * @note The first measurement result will be available after 12ms. Small
  * accuracy deviations (few % of reading) can occur during the first 30ms
@@ -181,7 +181,7 @@ int16_t sfm_sf06_start_co2_continuous_measurement(void);
  * - SFM3003
  * - SFM4300
  * - SFM3119
- * - SFM3012
+ * - SFM3013
  * - SFM3019
  *
  * @param volume_fraction Volume fraction of dioxigen in ‰.
@@ -192,13 +192,14 @@ int16_t sfm_sf06_start_air_o2_continuous_measurement(uint16_t volume_fraction);
 
 /**
  * sfm_sf06_start_n2o_o2_continuous_measurement() - The sensor starts measuring
- * the  N₂O / O₂ flow and temperature and provides a status word. All three
- * measurement results can be read out through one single I2C read when the
- * continuous measurement is running. The specific command code used for the
- * start continuous measurement command selects the calibrated gas or binary gas
- * mixture (lookup table) for the flow signal. Supported by products:
- * - SFM4300
- * - SFM3013 (HeOx)
+ * the  N₂O / O₂ (*HeOx/O₂ for SMF3013-300-CLM*) flow and temperature and
+ * provides a status word. All three measurement results can be read out through
+ * one single I2C read when the continuous measurement is running. The specific
+ * command code used for the start continuous measurement command selects the
+ * calibrated gas or binary gas mixture (lookup table) for the flow signal.
+ * Supported by products:
+ * - SFM4300-20
+ * - SFM3013-300-CLM (HeOx)
  *
  * @param volume_fraction Volume fraction of O₂ in ‰.
  *
@@ -213,7 +214,7 @@ int16_t sfm_sf06_start_n2o_o2_continuous_measurement(uint16_t volume_fraction);
  * continuous measurement is running. The specific command code used for the
  * start continuous measurement command selects the calibrated gas or binary gas
  * mixture (lookup table) for the flow signal. Supported by products:
- * - SFM4300
+ * - SFM4300-20
  *
  * @param volume_fraction Volume fraction of O₂ in ‰.
  *
