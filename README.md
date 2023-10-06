@@ -1,26 +1,55 @@
-# Sensirion Embedded I2C SFM-SF06 Driver
+# Sensirion I2C SFM-SF06 embedded Library
 
-This is a generic embedded driver for the Sensirion SFM-SF06 sensors. It enables developers to communicate with a SFM-SF06 sensor on different hardware platforms by only adapting the I2C communication related source files.
+This document explains how to set up a sensor of the SFM-SF06 family to run on an embedded device using the I²C interface.
 
-The example uses the *SFM3119*
-[<center><img src="images/sfm3119.png" width="300px"></center>](./images/sfm3119.png). 
+<img src="images/SFM4300.png" width="300px">
 
-The following picture shows the connector layout for the SFMSF3119
-<center><img src="images/sfm3119_pinout.png" width="450px"></center>
-
-Other supported sensors are
- * SFM3003
- * SFM4300
- * SFM3119
- * SFM3012
- * SFM3019
-
- Click [here](https://sensirion.com/products/product-categories/gas-flow-sensors/) to learn more about the sfm-sf06 sensors.
+Click [here](https://sensirion.com/products/product-categories/gas-flow-sensors/) to learn more about the Sensirion SFM-SF06 sensor family.
 
 
-# Getting started
+Not all sensors of this driver family support all measurements.
+In case a measurement is not supported by all sensors, the products that
+support it are listed in the API description.
 
-## Implement the I2C Interface
+
+
+## Supported sensor types
+
+| Sensor name   | I²C Addresses  |
+| ------------- | -------------- |
+|[SFM4300](https://sensirion.com/products/catalog/?filter_series=77ed9322-c043-4eaf-ad3c-2b55aae69cdd)| **0x2A**, 0x2B, 0x2C, 0x2D|
+|[SFM3119](https://sensirion.com/products/catalog/SFM3119/)| **0x29**|
+|[SFM3003](https://sensirion.com/products/catalog/SEK-SFM3003/)| **0x28**, 0x2D|
+|[SFM3013](https://sensirion.com/products/catalog/SEK-SFM3013/)| **0x2F**|
+|[SFM3019](https://sensirion.com/products/catalog/SEK-SFM3019/)| **0x2E**|
+
+The following instructions and examples use a *SFM4300*.
+
+
+
+## Setup Guide
+
+### Connecting the Sensor
+
+Your sensor has 6 different signals that need to be connected to your board: ADDR, SDA, GND, VDD, SCL, IRQn.
+Use the following pins to connect your SFM-SF06:
+
+<img src="images/pinout_SFM4300.png" width="300px">
+
+| *Pin* | *Cable Color* | *Name* | *Description*  | *Comments* |
+|-------|---------------|:------:|----------------|------------|
+| 1 |  | ADDR |  | see data sheet section 4.1
+| 2 |  | SDA | I2C: Serial data input / output | Serial data, bidirectional
+| 3 |  | GND | Ground | 
+| 4 |  | VDD | Supply Voltage | 3.0V to 5.0V
+| 5 |  | SCL | I2C: Serial clock input | 
+| 6 |  | IRQn |  | Active low. see data sheet section 3.3
+
+
+
+The recommended voltage is 3.3V.
+
+### Configure the code
 
 In order to use the provided code we need to adjust two files according to your platform.
 
@@ -65,10 +94,11 @@ detailed template where you just need to fill in your system specific values.
 
 ## Choose the i2c address to use with your product
 
-The current code is configured to run with the SFMSF3119. In case you would like to use
-a different product you will need to adapt the configured I2c address.
-This is achieved by changing the parameter *init_driver()* to the correct address. The list 
-of supported I2C-addresses is found in the header *sfm_sf06_i2c.h*.
+The provided example is working with a SFM4300, I²C address 0x2A.
+In order to use the code with another product or I²C address you need to change it in the call sfm_sf06_init(ADDRESS) in
+`sfm_sf06_i2c_example_usage.c`. The list of supported I²C-addresses is found in the header 
+`sfm_sf06_i2c.h`.
+
 
 Now we are ready to compile and run the example usage for your sensor.
 
@@ -80,11 +110,26 @@ Here we demonstrate the procedure for Linux based platforms:
 
 1. Open up a terminal.
 2. Navigate to the directory where this README is located.
-3. Run `make` (this compiles the example code into one executable binary).
-4. Run the compiled executable with `./sfm_sf06_i2c_example_usage`
-5. Now you should see the first measurement values appear in your terminal. As
+3. Navigate to the subdirectory example-usage.
+4. Run `make` (this compiles the example code into one executable binary).
+5. Run the compiled executable with `./sfm_sf06_i2c_example_usage`
+6. Now you should see the first measurement values appear in your terminal. As
    a next step you can adjust the example usage file or write your own main
    function to use the sensor.
+
+## Compile and Run Tests
+
+The testframekwork used is CppUTest. Pass the source `.cpp`, `.c`  and header `.h`
+files from the tests and top level folder into your CPP compiler and run the
+resulting binary. This step may vary, depending on your platform.
+Here we demonstrate the procedure for Linux based platforms:
+
+1. Open up a terminal.
+2. Install CppUTest framework `apt install cpputest`.
+3. Navigate to the directory `tests`.
+4. Run `make` (this compiles the test code into one executable binary).
+5. Run the compiled executable with `./sfm_sf06_test_hw_i2c`.
+6. Now you should see the test output on your console.
 
 # Background
 
@@ -119,3 +164,32 @@ In these files you can find some helper functions used by Sensirion's embedded
 drivers. It mostly contains byte order conversions for different variable
 types. These functions are also used by the UART embedded drivers therefore
 they are kept in their own file.
+
+## Contributing
+
+**Contributions are welcome!**
+
+We develop and test this driver using our company internal tools (version
+control, continuous integration, code review etc.) and automatically
+synchronize the master branch with GitHub. But this doesn't mean that we don't
+respond to issues or don't accept pull requests on GitHub. In fact, you're very
+welcome to open issues or create pull requests :)
+
+This Sensirion library uses
+[`clang-format`](https://releases.llvm.org/download.html) to standardize the
+formatting of all our `.c` and `.h` files. Make sure your contributions are
+formatted accordingly:
+
+The `-i` flag will apply the format changes to the files listed.
+
+```bash
+clang-format -i *.c *.h
+```
+
+Note that differences from this formatting will result in a failed build until
+they are fixed.
+
+
+# License
+
+See [LICENSE](LICENSE).
