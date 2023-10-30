@@ -7,7 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.0] - 2023-10-06
+## [1.0.0] - 2023-10-30
+
+### Changed
+
+- Update code from driver generator 0.34.0
+- Move example and makefile into example-usage directory
+- Improve readme
+
+## [0.1.0] - 2021-11-23
 
 Initial release
 
